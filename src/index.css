@@ -12,3 +12,46 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* TikTok-style styling */
+body {
+  @apply font-sans text-white;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+/* Prevent text selection for better mobile experience */
+* {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection in specific cases */
+input, textarea, [contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Snappy vertical scrolling */
+.snap-y-mandatory {
+  scroll-snap-type: y mandatory;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+/* TikTok-style animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Placeholder styling for content that hasn't loaded yet */
+.placeholder-item {
+  @apply bg-gray-800 animate-pulse rounded-lg;
+}
