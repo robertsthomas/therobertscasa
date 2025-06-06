@@ -29,7 +29,7 @@ const AboutContactSection: React.FC<AboutContactSectionProps> = ({ onContactClic
       label: 'TikTok', 
       url: 'https://tiktok.com/@therobertscasa' 
     },
-    { icon: Mail, label: 'Email', url: 'mailto:therobertscasa@gmail.com' }
+    { icon: Mail, label: 'Email', url: 'mailto:therobertscasa@yahoo.com' }
   ];
 
   return (

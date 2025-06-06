@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, SkipForward } from 'lucide-react';
+import { ChevronDown, SkipForward, ArrowUp } from 'lucide-react';
 import workItems from '../data/workItems';
 
 interface Section {
@@ -164,23 +164,42 @@ const VerticalScroll = forwardRef<VerticalScrollHandle, VerticalScrollProps>(
           ))}
         </motion.div>
         
-        {/* Skip Videos button */}
-        {isViewingVideo() && (
-          <motion.button
-            className="absolute top-6 right-6 bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full flex items-center space-x-1 z-20 border border-white/30"
-            onClick={skipVideos}
-            whileHover={{ scale: 1.05, backgroundColor: 'rgba(0,0,0,0.7)' }}
-            whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-          >
-            <SkipForward className="w-4 h-4 mr-1" />
-            <span className="text-sm font-medium">
-              Skip Videos {getVideosLeft() > 0 ? `(${getVideosLeft()} left)` : ''}
-            </span>
-          </motion.button>
-        )}
+        {/* Top buttons container */}
+        <div className="absolute top-6 right-6 flex gap-2 z-20">
+          {/* Back to Top button */}
+          {currentIndex > 0 && (
+            <motion.button
+              className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full flex items-center space-x-1 border border-white/30"
+              onClick={() => setCurrentIndex(0)}
+              whileHover={{ scale: 1.05, backgroundColor: 'rgba(0,0,0,0.7)' }}
+              whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <ArrowUp className="w-4 h-4 mr-1" />
+              <span className="text-sm font-medium">Back to Top</span>
+            </motion.button>
+          )}
+          
+          {/* Skip Videos button */}
+          {isViewingVideo() && (
+            <motion.button
+              className="bg-black/50 backdrop-blur-sm text-white px-3 py-1.5 rounded-full flex items-center space-x-1 border border-white/30"
+              onClick={skipVideos}
+              whileHover={{ scale: 1.05, backgroundColor: 'rgba(0,0,0,0.7)' }}
+              whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <SkipForward className="w-4 h-4 mr-1" />
+              <span className="text-sm font-medium">
+                Skip Videos {getVideosLeft() > 0 ? `(${getVideosLeft()} left)` : ''}
+              </span>
+            </motion.button>
+          )}
+        </div>
         
         {/* Always show down caret, but make it inactive on last slide */}
         <motion.div 

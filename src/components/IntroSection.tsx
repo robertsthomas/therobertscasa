@@ -57,22 +57,7 @@ const IntroSection: React.FC = () => {
             I create engaging social media content for top brands that connects with audiences and drives results.
           </motion.p>
           
-          <motion.div
-            className="flex flex-wrap justify-center gap-3"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 20 }}
-            transition={{ duration: 0.6, delay: 1.1 }}
-          >
-            <div className="px-4 py-1.5 bg-beige-200 rounded-full text-sm text-dark-900">
-              #contentcreator
-            </div>
-            <div className="px-4 py-1.5 bg-beige-200 rounded-full text-sm text-dark-900">
-              #brandpartner
-            </div>
-            <div className="px-4 py-1.5 bg-beige-200 rounded-full text-sm text-dark-900">
-              #socialmedia
-            </div>
-          </motion.div>
+         
         </div>
         
         <motion.div

@@ -1,6 +1,6 @@
-import React from 'react';
-import { Heart, MessageCircle, Share2, Music } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { Heart, MessageCircle, Share2, Music, Check, Volume2, VolumeX } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface TikTokFrameProps {
   children: React.ReactNode;
@@ -10,6 +10,9 @@ interface TikTokFrameProps {
   likes?: number;
   comments?: number;
   shares?: number;
+  videoId?: string;
+  isMuted?: boolean;
+  onMuteToggle?: () => void;
 }
 
 const TikTokFrame: React.FC<TikTokFrameProps> = ({
@@ -19,8 +22,76 @@ const TikTokFrame: React.FC<TikTokFrameProps> = ({
   songName = 'Original Sound - therobertscasa',
   likes = 9243,
   comments = 234,
-  shares = 134
+  shares = 134,
+  videoId = 'default',
+  isMuted = true,
+  onMuteToggle
 }) => {
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(likes);
+  const [shareCount, setShareCount] = useState(shares);
+  const [showToast, setShowToast] = useState(false);
+  
+  // Load like state from localStorage when component mounts
+  useEffect(() => {
+    try {
+      const storedLikes = localStorage.getItem('likedVideos');
+      if (storedLikes) {
+        const likedVideos = JSON.parse(storedLikes);
+        if (likedVideos[videoId]) {
+          setIsLiked(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error loading liked state:", error);
+    }
+  }, [videoId]);
+  
+  // Toggle like function
+  const toggleLike = () => {
+    try {
+      const newLikedState = !isLiked;
+      setIsLiked(newLikedState);
+      
+      // Update like count
+      if (newLikedState) {
+        setLikeCount(prev => prev + 1);
+      } else {
+        setLikeCount(prev => prev - 1);
+      }
+      
+      // Save to localStorage
+      const storedLikes = localStorage.getItem('likedVideos');
+      let likedVideos = storedLikes ? JSON.parse(storedLikes) : {};
+      
+      if (newLikedState) {
+        likedVideos[videoId] = true;
+      } else {
+        delete likedVideos[videoId];
+      }
+      
+      localStorage.setItem('likedVideos', JSON.stringify(likedVideos));
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  };
+  
+  // Handle share button click
+  const handleShare = () => {
+    navigator.clipboard.writeText('https://tiktok.com/@therobertscasa')
+      .then(() => {
+        setShowToast(true);
+        setShareCount(prev => prev + 1);
+        
+        setTimeout(() => {
+          setShowToast(false);
+        }, 2000);
+      })
+      .catch(err => {
+        console.error('Failed to copy link: ', err);
+      });
+  };
+
   return (
     <div className="relative h-full w-full bg-black flex items-center justify-center overflow-hidden">
       {/* Main content area */}
@@ -49,31 +120,75 @@ const TikTokFrame: React.FC<TikTokFrameProps> = ({
           
           {/* Like button */}
           <motion.button 
-            className="flex flex-col items-center"
-            whileTap={{ scale: 1.2 }}
+            type="button"
+            className="flex flex-col items-center cursor-pointer z-50"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleLike();
+            }}
+            whileTap={{ scale: 0.9 }}
           >
-            <Heart className="w-8 h-8 text-white" />
-            <span className="text-white text-xs mt-1">{likes}</span>
+            <motion.div
+              animate={{
+                scale: isLiked ? [1, 1.2, 1] : 1,
+                color: isLiked ? "#ef4444" : "#ffffff"
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              <Heart className="w-8 h-8" fill={isLiked ? "currentColor" : "none"} />
+            </motion.div>
+            <span className="text-white text-xs mt-1">{likeCount}</span>
           </motion.button>
           
           {/* Comment button */}
-          <motion.button 
+          <button 
             className="flex flex-col items-center"
-            whileTap={{ scale: 1.2 }}
           >
             <MessageCircle className="w-8 h-8 text-white" />
             <span className="text-white text-xs mt-1">{comments}</span>
-          </motion.button>
+          </button>
           
           {/* Share button */}
-          <motion.button 
+          <button 
             className="flex flex-col items-center"
-            whileTap={{ scale: 1.2 }}
+            onClick={handleShare}
           >
             <Share2 className="w-8 h-8 text-white" />
-            <span className="text-white text-xs mt-1">{shares}</span>
+            <span className="text-white text-xs mt-1">{shareCount}</span>
+          </button>
+
+          {/* Mute button */}
+          <motion.button 
+            className="flex flex-col items-center"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMuteToggle?.();
+            }}
+            whileTap={{ scale: 0.9 }}
+          >
+            {isMuted ? (
+              <VolumeX className="w-8 h-8 text-white" />
+            ) : (
+              <Volume2 className="w-8 h-8 text-white" />
+            )}
+            <span className="text-white text-xs mt-1">Sound</span>
           </motion.button>
         </div>
+        
+        {/* Toast notification */}
+        <AnimatePresence>
+          {showToast && (
+            <motion.div 
+              className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-white rounded-full py-2 px-4 shadow-lg flex items-center gap-2"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+            >
+              <Check className="w-4 h-4 text-green-500" />
+              <span className="text-sm font-medium">Link copied!</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

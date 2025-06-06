@@ -42,7 +42,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, index }) => {
           src={video.videoUrl}
           className="w-full h-full object-cover object-[0%_30%]"
           loop
-          muted
+          // muted
           playsInline
         />
         <div className="absolute inset-0 bg-dark-900/20 transition-colors duration-300"></div>
